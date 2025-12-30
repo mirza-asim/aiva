@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "./server.js", "destination": "@vercel/node" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}

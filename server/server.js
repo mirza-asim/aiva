@@ -1,13 +1,11 @@
-
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const corsMiddleware = cors({
-  origin: "*",
-  methods: ["POST"],
-});
+let App = express()
+App.use(cors()) //Middleware
+App.use(express.json())
 
 const portfolioInfo = `
 You are A.I.V.A. — Artificial Intelligence Virtual Assistant.
@@ -377,30 +375,25 @@ const chat = model.startChat({
   history: [],
 });
 
-export default async function handler(req, res) {
-    await corsMiddleware(req, res, async () => {
-      if (req.method !== "POST") {
-        return res.status(405).json({ error: "Method not allowed" });
-      }
-      
-      try {
-        //console.log(req.body);
-        let {inputValue} = req.body
-        let data = await chat.sendMessage(inputValue)
+App.post('/ask',
+    async (req,res)=>{
+    
+    //console.log(req.body);
+    let {inputValue} = req.body
+    let data = await chat.sendMessage(inputValue)
 
-        let finalData = data.response.text()
+    let finalData = data.response.text()
+    
+    res.json(
+        {
+            _status: true,
+            _message:"Content found..",
+            _role: "model",
+            _text: finalData
+        }
+    )
+})
 
-        res.json(
-            {
-                _status: true,
-                _message:"Content found..",
-                _role: "model",
-                _text: finalData
-            }
-        )
-          } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: "AI generation failed" });
-    }
-});
-}
+App.listen(process.env.PORT,()=>{
+    console.log("SERVER START");
+})

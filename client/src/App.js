@@ -19,7 +19,7 @@ function App() {
     
    try {
 
-    const res = await axios.post("/api/ask", {inputValue})
+    const res = await axios.post('http://localhost:8000/ask', {inputValue})
     .then((res)=>res.data)
     .then((finalRes)=>{
       console.log("FINAL-RES = ", finalRes);
